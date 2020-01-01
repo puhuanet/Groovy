@@ -2,6 +2,7 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 log
 build_submitter.log
+out
 output
  
 ### STS ###
