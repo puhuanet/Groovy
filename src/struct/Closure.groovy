@@ -116,3 +116,97 @@ println str.every {
 println str.collect {
     it.toUpperCase()
 }
+
+// 闭包的三个重要变量：this，owner和delegate
+// this：代表闭包定义处的类
+// owner：代表闭包定义处的类或者对象
+// delegate：代表任意对象，默认与owner一致
+clouser = {
+    println this
+    println owner
+    println delegate
+}
+// 都是当前脚本的对象
+clouser()
+
+// 类内部静态闭包
+class Boy {
+
+    def static clouser = {
+        println this
+        println owner
+        println delegate
+    }
+
+    def static say() {
+        def clouser = {
+            println this
+            println owner
+            println delegate
+        }
+        clouser.call()
+    }
+
+}
+Boy.clouser()
+Boy.say()
+
+// 类内部动态闭包
+class Girl {
+
+    def clouser = {
+        println this
+        println owner
+        println delegate
+    }
+
+    def say() {
+        def clouser = {
+            println this
+            println owner
+            println delegate
+        }
+        clouser.call()
+    }
+
+}
+Girl girl = new Girl();
+girl.clouser()
+girl.say()
+
+// 在闭包中定义闭包
+def outerClouser = {
+    def innerClouser = {
+        println this
+        println owner
+        println delegate
+    }
+    innerClouser.delegate = girl
+    innerClouser()
+}
+outerClouser()
+
+// 闭包委托策略
+class Student {
+    String name
+    def pretty = {
+        "My name is ${name}"
+    }
+    String toString() {
+        pretty.call()
+    }
+}
+
+class Teacher {
+    String name;
+}
+
+def student = new Student(name: 'Oliver')
+def teacher = new Teacher(name: 'Cathy')
+println student.toString()
+student.pretty.delegate = teacher
+// 修改委托策略
+// DELEGATE_FIRST：先从delegate的对象中寻找
+// DELEGATE_ONLY：只从delegate的对象中寻找
+student.pretty.resolveStrategy = groovy.lang.Closure.DELEGATE_FIRST
+println student.toString()
