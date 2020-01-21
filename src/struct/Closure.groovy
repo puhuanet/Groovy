@@ -83,3 +83,36 @@ int cal(int number) {
     return result
 }
 println cal(x)
+
+// 字符串与闭包结合使用
+String str = 'the 2 and 3 is 5'
+
+// each
+println str.each {
+    String temp -> println temp.multiply(2)
+}
+
+// find
+println str.find {
+    String s -> s.isNumber()
+}
+
+// findAll
+println str.findAll {
+    String s -> s.isNumber()
+}
+
+// any
+println str.any {
+    String s -> s.isNumber()
+}
+
+// every
+println str.every {
+    String s -> s.isNumber()
+}
+
+// collect
+println str.collect {
+    it.toUpperCase()
+}
