@@ -1,7 +1,7 @@
 package objectorention
 
 // Groovy中默认都是public的
-class Person implements Action {
+class Person implements Serializable {
 
     String name
 
@@ -11,18 +11,14 @@ class Person implements Action {
         this.age += years
     }
 
-    @Override
-    void eat() {
-
+    // 方法丢失的时候先调用
+    def methodMissing(String name, Object args) {
+        return "the method is missing"
     }
 
-    @Override
-    void drink() {
-
+    // 方法找不到的时候用它替代
+    def invokeMethod(String name, Object args) {
+        return "the method is ${name}, the params is ${args}"
     }
 
-    @Override
-    void play() {
-
-    }
 }
