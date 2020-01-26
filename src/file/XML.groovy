@@ -31,3 +31,39 @@ final String xml = '''
 </response>
 '''
 println xml
+
+// 解析XML文档
+def xmlSluper = new XmlSlurper()
+def response = xmlSluper.parseText(xml)
+
+// 输出解析后的结果
+println response.value.books[0].book[0].title.text()
+// 数据节点的属性值
+println response.value.books[1].book[0].@available
+
+// 遍历查找想要的数据-常规遍历
+def list = []
+response.value.books.each { books ->
+    //下面开始对书结点进行遍历
+    books.book.each { book ->
+        def author = book.author.text()
+        if (author.equals('李刚')) {
+            list.add(book.title.text())
+        }
+    }
+}
+println list
+
+// 遍历查找想要的数据-深度遍历
+list = response.depthFirst().findAll { book ->
+    return book.author.text() == '李刚' ? true : false
+}
+println list
+
+// 遍历查找想要的数据-广度遍历
+def name = response.value.books.children().findAll { node ->
+    node.name() == 'book' && node.@id == '2'
+}.collect { node ->
+    return node.title.text()
+}
+println name
