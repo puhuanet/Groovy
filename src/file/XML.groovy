@@ -1,5 +1,7 @@
 package file
 
+import groovy.xml.MarkupBuilder
+
 final String xml = '''
 <response version-api="2.0">
     <value>
@@ -67,3 +69,47 @@ def name = response.value.books.children().findAll { node ->
     return node.title.text()
 }
 println name
+
+// 生成XML格式数据的两种方式
+/*
+<langs type='current' count='3' mainstream='true'>
+ <language flavor='static' version='1.5'>Java</language>
+ <language flavor='dynamic' version='1.6'>Groovy</language>
+ <language flavor='dynamic' version='1.9'>JavaScript</language>
+</langs>
+*/
+def sw = new StringWriter()
+def xmlBuilder = new MarkupBuilder(sw)
+xmlBuilder.langs(type: 'current', count: '3', mainstream: 'true') {
+    language(flavor: 'static', version: '1.5', 'Java')
+    language(flavor: 'dynamic', version: '1.6', 'Groovy')
+    language(flavor: 'dynamic', version: '1.9', 'JavaScript')
+}
+println sw
+
+class Language {
+    String flavor
+    String version
+    String value
+}
+
+class Langs {
+    String type = 'current'
+    int count = 3
+    boolean mainstream = true
+    def languages = [
+            new Language(flavor: 'static', version: '1.5', value: 'Java'),
+            new Language(flavor: 'dynamic', version: '1.6', value: 'Groovy'),
+            new Language(flavor: 'dynamic', version: '1.9', value: 'JavaScript')
+    ]
+}
+
+sw = new StringWriter()
+xmlBuilder = new MarkupBuilder(sw)
+def langs = new Langs()
+xmlBuilder.langs(type: langs.type, count: langs.count, mainstream: langs.mainstream) {
+    langs.languages.each { lang ->
+        language(flavor: lang.flavor, version: lang.version, lang.value)
+    }
+}
+println sw
